@@ -19,6 +19,7 @@
 
 package samples;
 
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
@@ -46,7 +47,7 @@ public class Controller implements Initializable {
         listView.fireEvent(event);
     }
 
-    public Controller()  {
+    public Controller() {
 
 
     }
@@ -55,18 +56,23 @@ public class Controller implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         studentObservableList = FXCollections.observableArrayList();
 
-        Student s1 = new Student("John Doe", Student.GENDER.MALE);
-
+        Student s0 = new Student("John Doe", Student.GENDER.MALE);
+        Student s1 = new Student("Jane Doe", Student.GENDER.FEMALE);
+        Student s2 = new Student("Donte Dunigan", Student.GENDER.MALE);
+        Student s3 = new Student("Gavin Genna", Student.GENDER.MALE);
+        Student s4 = new Student("Darin Dear", Student.GENDER.MALE);
+        Student s5 = new Student("Pura Petty", Student.GENDER.FEMALE);
+        Student s6 = new Student("Herma Hines", Student.GENDER.FEMALE);
 
         //add some Students
         studentObservableList.addAll(
+                s0,
                 s1,
-                new Student("Jane Doe", Student.GENDER.FEMALE),
-                new Student("Donte Dunigan", Student.GENDER.MALE),
-                new Student("Gavin Genna", Student.GENDER.MALE),
-                new Student("Darin Dear", Student.GENDER.MALE),
-                new Student("Pura Petty", Student.GENDER.FEMALE),
-                new Student("Herma Hines", Student.GENDER.FEMALE)
+                s2,
+                s3,
+                s4,
+                s5,
+                s6
         );
 
 
@@ -74,26 +80,37 @@ public class Controller implements Initializable {
         listView.setCellFactory(studentListView -> new StudentListViewCell());
 
 
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
                 super.run();
 
                 while (true) {
-
-                    Student.GENDER g = Student.GENDER.getRandomGender();
-                    System.out.println("g ________ " + g);
-                    s1.setGender(g);
-                    triggerUpdate(listView,s1,0);
+                    Platform.runLater(() -> {
+                    changeGender(s0);
+                    changeGender(s1);
+                    changeGender(s2);
+                    changeGender(s3);
+                    changeGender(s4);
+                    changeGender(s5);
+                    changeGender(s6);
+                    });
 
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(200);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                         return;
                     }
 
                 }
+            }
+
+            private void changeGender(Student s) {
+                Student.GENDER g = Student.GENDER.getRandomGender();
+                System.out.println("g ________ " + g);
+                s.setGender(g);
+                triggerUpdate(listView, s, studentObservableList.indexOf(s));
             }
         }.start();
 
